@@ -74,6 +74,7 @@ class ShipmentStatus(Enum):
 def update_shipment(id: int, body: dict[str, ShipmentStatus]) -> dict[str, Any]:
     # Update data with given fields
     shipments[id].update(body)
+    
     return shipments[id]
 
 
@@ -92,3 +93,7 @@ def get_scalar_docs():
         openapi_url=app.openapi_url,
         title="Scalar API",
     )
+
+
+
+
