@@ -1,6 +1,6 @@
 import sqlite3
 from typing import Any
-from schemas import ShipmentRead, ShipmentCreate, ShipmentUpdate
+from app_40.database.schemas import ShipmentRead, ShipmentCreate, ShipmentUpdate
 from contextlib import contextmanager
 
 

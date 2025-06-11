@@ -8,4 +8,5 @@ dependencies = [
     "fastapi[all]",
     "pip",
     "scalar-fastapi",
+    "sqlmodel>=0.0.24",
 ]
