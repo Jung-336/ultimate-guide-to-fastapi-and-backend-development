@@ -1,17 +1,21 @@
 from datetime import datetime, timedelta
 
-from fastapi import HTTPException, status
-from app_53.api.schemas.shipment import ShipmentCreate, ShipmentUpdate
-from app_53.database.models import Shipment, ShipmentStatus
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.schemas.shipment import ShipmentCreate
+from database.models import Shipment, ShipmentStatus
+
 
 class ShipmentService:
     def __init__(self, session: AsyncSession):
+        # Get database session to perform database operations
         self.session = session
 
-    async def get(self, id:int) -> Shipment:
+    # Get a shipment by id 
+    async def get(self, id: int) -> Shipment:
         return await self.session.get(Shipment, id)
 
+    # Add a new shipment
     async def add(self, shipment_create: ShipmentCreate) -> Shipment:
         new_shipment = Shipment(
             **shipment_create.model_dump(),
@@ -21,21 +25,13 @@ class ShipmentService:
         self.session.add(new_shipment)
         await self.session.commit()
         await self.session.refresh(new_shipment)
-        
+
         return new_shipment
 
-    async def update(self, shipment_update: ShipmentUpdate) -> Shipment:
-        # Update data with given fields
-        update = await shipment_update.model_dump(exclude_none=True)
-
-        if not update:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No data provided to update",
-            )
-
+    # Update an existing shipment
+    async def update(self, id: int, shipment_update: dict) -> Shipment:
         shipment = await self.get(id)
-        shipment.sqlmodel_update(update)
+        shipment.sqlmodel_update(shipment_update)
 
         self.session.add(shipment)
         await self.session.commit()
@@ -43,9 +39,7 @@ class ShipmentService:
 
         return shipment
 
+    # Delete a shipment
     async def delete(self, id: int) -> None:
-        # Remove from database
         await self.session.delete(await self.get(id))
         await self.session.commit()
-
-
